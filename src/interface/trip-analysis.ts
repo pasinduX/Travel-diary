@@ -6,6 +6,11 @@ export interface TripAnalysisStatus {
   processing: number;
   analyzed: number;
   failed: number;
+  failures: Array<{
+    imageId: string;
+    fileName: string;
+    error: string;
+  }>;
   percentage: number;
   readyToGenerate: boolean;
 }
@@ -18,6 +23,11 @@ export interface RawTripAnalysisStatus {
   processing?: number;
   analyzed?: number;
   failed?: number;
+  failures?: Array<{
+    imageId?: string;
+    fileName?: string;
+    error?: string;
+  }>;
   percentage?: number;
   readyToGenerate?: boolean;
 }

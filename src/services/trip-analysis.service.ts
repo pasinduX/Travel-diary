@@ -22,6 +22,11 @@ export async function getTripAnalysisStatus(
     processing: Number(raw.processing ?? 0),
     analyzed,
     failed: Number(raw.failed ?? 0),
+    failures: (raw.failures ?? []).map((failure) => ({
+      imageId: String(failure.imageId ?? ""),
+      fileName: String(failure.fileName ?? "Photograph"),
+      error: String(failure.error ?? "Unknown analysis error"),
+    })),
     percentage: clampPercentage(raw.percentage, total > 0 ? (analyzed / total) * 100 : 0),
     readyToGenerate: raw.readyToGenerate === true,
   };

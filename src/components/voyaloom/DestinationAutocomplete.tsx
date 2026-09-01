@@ -42,7 +42,11 @@ export function DestinationAutocomplete({ value, onChange }: DestinationAutocomp
     const timeout = setTimeout(async () => {
       setLoading(true);
       try {
-        const params = new URLSearchParams({ text: query, apiKey: NEXT_PUBLIC_GEOAPIFY_KEY, limit: "5" });
+        const params = new URLSearchParams({
+          text: query,
+          apiKey: NEXT_PUBLIC_GEOAPIFY_KEY,
+          limit: "5",
+        });
         const response = await fetch(
           `https://api.geoapify.com/v1/geocode/autocomplete?${params.toString()}`,
           { signal: controller.signal },

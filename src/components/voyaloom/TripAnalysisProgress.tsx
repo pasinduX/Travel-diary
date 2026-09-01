@@ -54,9 +54,16 @@ export function TripAnalysisProgress({ status }: TripAnalysisProgressProps) {
       </div>
 
       {hasFailures && (
-        <p className="mt-8 text-sm text-sand/50">
-          {status.failed} photograph{status.failed === 1 ? "" : "s"} couldn&apos;t be analyzed.
-        </p>
+        <div className="mt-8 space-y-2 text-left text-sm text-sand/50">
+          <p>
+            {status.failed} photograph{status.failed === 1 ? "" : "s"} couldn&apos;t be analyzed.
+          </p>
+          {status.failures.slice(0, 3).map((failure) => (
+            <p key={failure.imageId} className="break-words text-xs text-sand/40">
+              {failure.fileName}: {failure.error}
+            </p>
+          ))}
+        </div>
       )}
     </div>
   );
