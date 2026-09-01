@@ -1,0 +1,23 @@
+# VoyaLoom
+# Public marketing pages are open to all crawlers. The authenticated app,
+# auth flows and internal endpoints are excluded. Private content is also
+# protected by authentication — this file is not the only safeguard.
+
+User-agent: *
+Allow: /
+
+Disallow: /dashboard
+Disallow: /create-trip
+Disallow: /upload
+Disallow: /login
+Disallow: /signup
+Disallow: /verify
+Disallow: /auth/
+Disallow: /_serverFn/
+Disallow: /api/
+
+# /trip/* and /album/* are sample-album demos. They are intentionally
+# crawlable so their "noindex, follow" tag is seen and their links are
+# followed, but they are kept out of the sitemap and the index.
+
+Sitemap: https://voyaloom.xyz/sitemap.xml

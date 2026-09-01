@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="VoyaLoom — turn your travel photos into a cinematic album">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset="1" stop-color="#141d33"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- cinematic letterbox bars -->
+  <rect x="0" y="0" width="1200" height="46" fill="#070b16"/>
+  <rect x="0" y="584" width="1200" height="46" fill="#070b16"/>
+
+  <!-- floating photo frames -->
+  <g opacity="0.9">
+    <rect x="792" y="150" width="150" height="190" rx="6" fill="#6ea8dd" opacity="0.12" stroke="#6ea8dd" stroke-width="2" transform="rotate(-7 867 245)"/>
+    <rect x="880" y="220" width="180" height="150" rx="6" fill="#6ea8dd" opacity="0.10" stroke="#9cc4e8" stroke-width="2" transform="rotate(5 970 295)"/>
+    <rect x="828" y="330" width="140" height="140" rx="6" fill="#6ea8dd" opacity="0.14" stroke="#6ea8dd" stroke-width="2" transform="rotate(-2 898 400)"/>
+  </g>
+
+  <text x="90" y="150" font-family="Georgia, 'Times New Roman', serif" font-size="30" fill="#9cc4e8" letter-spacing="6">AI TRAVEL ALBUM GENERATOR</text>
+
+  <text x="86" y="300" font-family="Georgia, 'Times New Roman', serif" font-size="92" fill="#f4f7fb" font-style="italic">VoyaLoom</text>
+
+  <text x="90" y="380" font-family="Georgia, 'Times New Roman', serif" font-size="46" fill="#dfe7f2">Turn your travel photos</text>
+  <text x="90" y="440" font-family="Georgia, 'Times New Roman', serif" font-size="46" fill="#dfe7f2">into a cinematic story.</text>
+
+  <text x="90" y="520" font-family="Helvetica, Arial, sans-serif" font-size="24" fill="#8ea0bd">Upload your trip photos — AI organizes, curates and builds the album.</text>
+</svg>

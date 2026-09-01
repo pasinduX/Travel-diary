@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="VoyaLoom">
+  <rect width="64" height="64" rx="14" fill="#0b1020"/>
+  <!-- stacked photos -->
+  <rect x="14" y="16" width="28" height="22" rx="3" fill="none" stroke="#6ea8dd" stroke-width="2.5" transform="rotate(-8 28 27)"/>
+  <rect x="20" y="22" width="30" height="24" rx="3" fill="#6ea8dd" opacity="0.14" stroke="#9cc4e8" stroke-width="2.5" transform="rotate(6 35 34)"/>
+  <!-- film-frame sprocket dots -->
+  <circle cx="24" cy="48" r="1.6" fill="#9cc4e8"/>
+  <circle cx="32" cy="48" r="1.6" fill="#9cc4e8"/>
+  <circle cx="40" cy="48" r="1.6" fill="#9cc4e8"/>
+</svg>
