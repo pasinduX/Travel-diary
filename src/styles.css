@@ -313,8 +313,14 @@
 }
 @keyframes album-beacon {
   0%,
-  100% { opacity: 0.25; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1.4); }
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
 }
 
 .animate-slow-zoom {

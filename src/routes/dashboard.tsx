@@ -255,6 +255,7 @@ function DashboardTripCard({
   return (
     <MemoryCard
       to={`/trip/${trip.id}/processing`}
+      navigateOnCard={false}
       image={trip.coverImageUrl || heroImg}
       title={trip.title || trip.destination || "Untitled trip"}
       date={formatDate(trip.departure)}

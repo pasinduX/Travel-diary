@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { MapPin, Calendar, Sparkles, ArrowRight, Loader2 } from "lucide-react";
+import { Calendar, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { LuxuryNavbar } from "@/components/voyaloom/LuxuryNavbar";
+import { DestinationAutocomplete } from "@/components/voyaloom/DestinationAutocomplete";
 import { CinematicFooter } from "@/components/voyaloom/CinematicFooter";
 import { requireAuth } from "@/lib/auth/guards";
 import { createTripFn } from "@/services/trip.functions";
@@ -165,13 +166,7 @@ function CreateTrip() {
                   value={form.title}
                   onChange={set("title")}
                 />
-                <Field
-                  icon={<MapPin className="size-4 text-gold" />}
-                  label="Destination"
-                  placeholder="Positano, Italy"
-                  value={form.destination}
-                  onChange={set("destination")}
-                />
+                <DestinationAutocomplete value={form.destination} onChange={set("destination")} />
               </>
             )}
 

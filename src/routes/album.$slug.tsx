@@ -133,18 +133,6 @@ function Album() {
   return (
     <AlbumShell>
       {generating && <AlbumGenerationLoader />}
-      <div className="relative z-10 flex justify-end px-6 pt-28 sm:px-10">
-        <button
-          type="button"
-          data-testid="generate-album-button"
-          onClick={() => void handleGenerate()}
-          disabled={generating}
-          aria-busy={generating}
-          className="inline-flex items-center gap-3 border border-gold/60 bg-midnight/80 px-5 py-3 text-[10px] uppercase tracking-luxury text-gold backdrop-blur transition-colors hover:bg-gold hover:text-midnight disabled:cursor-wait disabled:opacity-70"
-        >
-          {generating ? "Composing album" : "Generate again"}
-        </button>
-      </div>
       {generationError && (
         <p className="relative z-10 mx-auto mt-4 max-w-xl px-6 text-center text-sm text-red-300">
           {generationError}
