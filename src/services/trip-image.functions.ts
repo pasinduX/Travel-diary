@@ -64,3 +64,14 @@ export const listTripImagesFn = createServerFn({ method: "GET" })
       toClientError(error);
     }
   });
+
+export const deleteTripImageFn = createServerFn({ method: "POST" })
+  .validator(z.object({ tripId: z.string().min(1), imageId: z.string().min(1) }))
+  .handler(async ({ data }): Promise<{ ok: true }> => {
+    try {
+      await tripImageService.deleteTripImage(await requireAccessToken(), data.tripId, data.imageId);
+      return { ok: true };
+    } catch (error) {
+      toClientError(error);
+    }
+  });

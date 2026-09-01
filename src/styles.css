@@ -300,6 +300,22 @@
     transform: translateY(-12px);
   }
 }
+@keyframes album-card-drift {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translate3d(18px, 10px, 0) rotate(-5deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(-2deg);
+  }
+}
+@keyframes album-beacon {
+  0%,
+  100% { opacity: 0.25; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
 
 .animate-slow-zoom {
   animation: slow-zoom 24s ease-in-out infinite alternate;
@@ -315,4 +331,17 @@
 }
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+.album-card-motion {
+  animation: album-card-drift 2.8s ease-in-out infinite;
+}
+.album-beacon {
+  animation: album-beacon 1.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .album-card-motion,
+  .album-beacon {
+    animation: none;
+    opacity: 1;
+  }
 }

@@ -7,17 +7,31 @@ interface AlbumRendererProps {
 }
 
 export function AlbumRenderer({ album, images }: AlbumRendererProps) {
+  const coverId = album.chapters
+    .flatMap((chapter) => chapter.blocks)
+    .find((block) => block.type === "album_cover")?.imageIds?.[0];
+  const coverImage = coverId ? images[coverId] : undefined;
+
   return (
     <article className="bg-midnight text-sand">
-      <header className="relative flex min-h-[80vh] items-end overflow-hidden px-6 py-20 md:px-12 md:py-28">
-        <div className="absolute inset-0 bg-gradient-to-br from-charcoal via-midnight to-midnight" />
+      <header className="relative flex min-h-[78vh] items-end overflow-hidden px-6 py-20 md:px-12 md:py-28">
+        {coverImage ? (
+          <img src={coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-charcoal via-midnight to-midnight" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-midnight via-midnight/55 to-midnight/15" />
         <div className="relative z-10 mx-auto w-full max-w-7xl">
           <p className="mb-6 text-[10px] uppercase tracking-ultra text-gold">
             A VoyaLoom travel story
           </p>
-          <h1 className="max-w-4xl font-serif text-6xl leading-[0.9] md:text-8xl">{album.title}</h1>
+          <h1 className="max-w-5xl font-serif text-6xl leading-[0.88] md:text-9xl">
+            {album.title}
+          </h1>
           {album.subtitle && (
-            <p className="mt-6 font-serif italic text-2xl text-sand/60">{album.subtitle}</p>
+            <p className="mt-6 max-w-xl font-serif italic text-2xl text-sand/75">
+              {album.subtitle}
+            </p>
           )}
         </div>
       </header>
@@ -42,9 +56,15 @@ export function AlbumRenderer({ album, images }: AlbumRendererProps) {
               )}
             </div>
             <div className="space-y-20 md:space-y-32">
-              {chapter.blocks.map((block, index) => (
-                <AlbumBlockRenderer key={`${chapter.id}-${index}`} block={block} images={images} />
-              ))}
+              {chapter.blocks
+                .filter((block) => block.type !== "album_cover")
+                .map((block, index) => (
+                  <AlbumBlockRenderer
+                    key={`${chapter.id}-${index}`}
+                    block={block}
+                    images={images}
+                  />
+                ))}
             </div>
           </section>
         ))}

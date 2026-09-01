@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Loader2, Trash2 } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface MemoryCardProps {
   to: string;
@@ -12,6 +13,7 @@ interface MemoryCardProps {
   momentLabel?: string;
   onDelete?: () => void;
   deleting?: boolean;
+  actions?: ReactNode;
 }
 
 export function MemoryCard({
@@ -24,6 +26,7 @@ export function MemoryCard({
   momentLabel = "moments",
   onDelete,
   deleting = false,
+  actions,
 }: MemoryCardProps) {
   return (
     <motion.div
@@ -79,6 +82,7 @@ export function MemoryCard({
           )}
         </button>
       )}
+      {actions && <div className="grid grid-cols-3 gap-px bg-white/10">{actions}</div>}
     </motion.div>
   );
 }

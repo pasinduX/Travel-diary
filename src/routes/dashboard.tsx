@@ -8,6 +8,7 @@ import { requireAuth } from "@/lib/auth/guards";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { CinematicFooter } from "@/components/voyaloom/CinematicFooter";
 import { MemoryCard } from "@/components/voyaloom/MemoryCard";
+import { ConfirmDialog } from "@/components/voyaloom/ConfirmDialog";
 import type { DashboardData, DashboardTrip } from "@/services/dashboard.functions";
 import { getDashboardDataFn } from "@/services/dashboard.functions";
 import { deleteTripFn } from "@/services/trip.functions";
@@ -35,6 +36,7 @@ function Dashboard() {
   const [currentPlan, setCurrentPlan] = useState<PricingPlan | null>(null);
   const [planError, setPlanError] = useState<string | null>(null);
   const [deletingTripId, setDeletingTripId] = useState<string | null>(null);
+  const [tripPendingDelete, setTripPendingDelete] = useState<DashboardTrip | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,8 +80,6 @@ function Dashboard() {
 
   async function handleDeleteTrip(trip: DashboardTrip) {
     const tripName = trip.title || trip.destination || "this trip";
-    if (!window.confirm(`Delete ${tripName}? This cannot be undone.`)) return;
-
     setDeletingTripId(trip.id);
     try {
       await deleteTripFn({ data: { id: trip.id } });
@@ -102,9 +102,23 @@ function Dashboard() {
   return (
     <div className="bg-midnight text-sand min-h-screen">
       <LuxuryNavbar />
+      <ConfirmDialog
+        open={tripPendingDelete !== null}
+        title="Delete this journey?"
+        description={`${tripPendingDelete?.title || tripPendingDelete?.destination || "This journey"} and all of its photographs will be permanently removed.`}
+        pending={deletingTripId !== null}
+        onOpenChange={(open) => {
+          if (!open && deletingTripId === null) setTripPendingDelete(null);
+        }}
+        onConfirm={() =>
+          tripPendingDelete
+            ? handleDeleteTrip(tripPendingDelete).then(() => setTripPendingDelete(null))
+            : undefined
+        }
+      />
 
       {/* Hero header */}
-      <section className="pt-40 pb-20 px-6 md:px-12 max-w-7xl mx-auto">
+      <section className="mx-auto max-w-7xl px-4 pb-14 pt-32 sm:px-6 sm:pb-20 sm:pt-40 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -113,7 +127,9 @@ function Dashboard() {
           <span className="text-[10px] uppercase tracking-ultra text-gold mb-6 block">
             Welcome back, {firstName}
           </span>
-          <h1 className="font-serif text-6xl md:text-8xl leading-[0.95] mb-6">Your archive.</h1>
+          <h1 className="mb-5 font-serif text-5xl leading-[0.95] sm:mb-6 sm:text-6xl md:text-8xl">
+            Your archive.
+          </h1>
           <p className="font-serif italic text-xl text-sand/60 max-w-xl">
             {isLoading
               ? "Gathering your journeys."
@@ -122,20 +138,22 @@ function Dashboard() {
         </motion.div>
 
         {/* Stats */}
-        <div className="mt-16 grid grid-cols-2 gap-px bg-white/5 border border-white/5 max-w-xl">
+        <div className="mt-10 grid max-w-xl grid-cols-2 gap-px border border-white/5 bg-white/5 sm:mt-16">
           {[
             { label: "Trips", value: data ? String(trips.length) : "—" },
             { label: "Images", value: data ? String(data.imageCount) : "—" },
           ].map((s) => (
-            <div key={s.label} className="bg-midnight p-8">
-              <p className="font-serif text-4xl text-gold">{s.value}</p>
-              <p className="text-[10px] uppercase tracking-luxury text-sand/40 mt-2">{s.label}</p>
+            <div key={s.label} className="bg-midnight p-5 sm:p-8">
+              <p className="font-serif text-3xl text-gold sm:text-4xl">{s.value}</p>
+              <p className="mt-2 text-[9px] uppercase tracking-luxury text-sand/40 sm:text-[10px]">
+                {s.label}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="px-6 md:px-12 max-w-7xl mx-auto mb-24">
+      <section className="mx-auto mb-16 max-w-7xl px-4 sm:mb-24 sm:px-6 md:px-12">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-8 border-b border-white/10 pb-6">
           <div>
             <span className="text-[10px] uppercase tracking-ultra text-gold mb-3 block">
@@ -167,16 +185,16 @@ function Dashboard() {
       </section>
 
       {/* Trips grid - cinematic asymmetric */}
-      <section className="px-6 md:px-12 max-w-7xl mx-auto pb-32">
-        <div className="flex flex-wrap items-end justify-between gap-4 mb-12 border-b border-white/10 pb-6">
+      <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 sm:pb-32 md:px-12">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-6 sm:mb-12">
           <h2 className="font-serif text-3xl md:text-4xl">Recent journeys</h2>
-          <div className="flex items-center gap-4">
+          <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:gap-4">
             <span className="text-[10px] uppercase tracking-luxury text-sand/40">
               {data ? `${trips.length} archived` : "Loading"}
             </span>
             <Link
               to="/create-trip"
-              className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-[10px] uppercase tracking-luxury text-gold transition-all hover:bg-gold hover:text-midnight"
+              className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3 py-2 text-[9px] uppercase tracking-luxury text-gold transition-all hover:bg-gold hover:text-midnight sm:px-4 sm:text-[10px]"
             >
               <Plus className="size-3" />
               New trip
@@ -207,13 +225,13 @@ function Dashboard() {
         )}
 
         {trips.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {trips.map((trip) => (
               <DashboardTripCard
                 key={trip.id}
                 trip={trip}
                 deleting={deletingTripId === trip.id}
-                onDelete={() => void handleDeleteTrip(trip)}
+                onDelete={() => setTripPendingDelete(trip)}
               />
             ))}
           </div>
@@ -236,7 +254,7 @@ function DashboardTripCard({
 }) {
   return (
     <MemoryCard
-      to={`/trip/${trip.id}`}
+      to={`/trip/${trip.id}/processing`}
       image={trip.coverImageUrl || heroImg}
       title={trip.title || trip.destination || "Untitled trip"}
       date={formatDate(trip.departure)}
@@ -245,6 +263,34 @@ function DashboardTripCard({
       mood={trip.cinematicMood || undefined}
       onDelete={onDelete}
       deleting={deleting}
+      actions={
+        <>
+          <Link
+            to="/trip/$slug/processing"
+            params={{ slug: trip.id }}
+            className="bg-midnight/95 px-1 py-3 text-center text-[8px] uppercase leading-tight tracking-[0.12em] text-gold transition-colors hover:bg-gold hover:text-midnight sm:px-2 sm:text-[9px] sm:tracking-luxury"
+          >
+            Generate album
+          </Link>
+          <Link
+            to="/album/$slug"
+            params={{ slug: trip.id }}
+            className="bg-midnight/95 px-1 py-3 text-center text-[8px] uppercase leading-tight tracking-[0.12em] text-sand/70 transition-colors hover:bg-sand hover:text-midnight sm:px-2 sm:text-[9px] sm:tracking-luxury"
+          >
+            View album
+          </Link>
+          <a
+            href={`/trip/${encodeURIComponent(trip.id)}/images`}
+            onClick={() =>
+              console.info("[VoyaLoom][Dashboard] view images clicked", { tripId: trip.id })
+            }
+            data-testid={`view-images-${trip.id}`}
+            className="bg-midnight/95 px-1 py-3 text-center text-[8px] uppercase leading-tight tracking-[0.12em] text-sand/70 transition-colors hover:bg-sand hover:text-midnight sm:px-2 sm:text-[9px] sm:tracking-luxury"
+          >
+            View images
+          </a>
+        </>
+      }
     />
   );
 }

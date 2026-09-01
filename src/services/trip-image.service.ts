@@ -29,6 +29,10 @@ function imagesPath(tripId: string): string {
   return `/api/v1/trips/${encodeURIComponent(tripId)}/images`;
 }
 
+function imagePath(tripId: string, imageId: string): string {
+  return `${imagesPath(tripId)}/${encodeURIComponent(imageId)}`;
+}
+
 export async function uploadTripImages(
   token: string,
   tripId: string,
@@ -69,6 +73,14 @@ export async function uploadTripImages(
 export async function listTripImages(token: string, tripId: string): Promise<TripImage[]> {
   const data = await apiRequest<RawTripImageCollection>(imagesPath(tripId), { token });
   return normalizeCollection(data);
+}
+
+export async function deleteTripImage(
+  token: string,
+  tripId: string,
+  imageId: string,
+): Promise<void> {
+  await apiRequest(imagePath(tripId, imageId), { method: "DELETE", token });
 }
 
 /* ------------------------------------------------------------------ */

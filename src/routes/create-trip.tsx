@@ -107,7 +107,7 @@ function CreateTrip() {
         <div className="absolute inset-0 bg-gradient-to-b from-midnight/60 via-midnight/80 to-midnight" />
       </div>
 
-      <section className="relative z-10 pt-40 pb-20 px-6 md:px-12 max-w-4xl mx-auto">
+      <section className="relative z-10 mx-auto max-w-4xl px-4 pb-16 pt-32 sm:px-6 sm:pb-20 sm:pt-40 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -116,7 +116,7 @@ function CreateTrip() {
           <span className="text-[10px] uppercase tracking-ultra text-gold mb-6 block">
             Chapter {String(step).padStart(2, "0")} of 03
           </span>
-          <h1 className="font-serif text-5xl md:text-7xl leading-[0.95] mb-4">
+          <h1 className="mb-4 font-serif text-4xl leading-[0.98] sm:text-5xl md:text-7xl">
             {step === 1 && (
               <>
                 Where did the <em className="font-light text-gradient-gold">story</em> begin?
@@ -133,14 +133,14 @@ function CreateTrip() {
               </>
             )}
           </h1>
-          <p className="font-serif italic text-lg text-sand/60 max-w-xl mb-12">
+          <p className="mb-9 max-w-xl font-serif text-base italic text-sand/60 sm:mb-12 sm:text-lg">
             {step === 1 && "Name your journey. Mark its coordinates on the map of memory."}
             {step === 2 && "A trip is bound by time — give us its first and final frame."}
             {step === 3 && "Tell us its mood. We will compose the rest."}
           </p>
 
           {/* Progress */}
-          <div className="flex gap-2 mb-12">
+          <div className="mb-9 flex gap-2 sm:mb-12">
             {[1, 2, 3].map((s) => (
               <div
                 key={s}
@@ -154,7 +154,7 @@ function CreateTrip() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="glass-strong rounded-sm p-10 space-y-6"
+            className="glass-strong space-y-6 rounded-sm p-5 sm:p-10"
           >
             {step === 1 && (
               <>
@@ -206,7 +206,7 @@ function CreateTrip() {
                       key={m}
                       type="button"
                       onClick={() => set("cinematicMood")(m)}
-                      className={`px-5 py-4 text-left border transition-all ${
+                      className={`border px-3 py-3 text-left transition-all sm:px-5 sm:py-4 ${
                         form.cinematicMood === m
                           ? "border-gold bg-gold/10 text-gold"
                           : "border-white/10 hover:border-white/30 text-sand/70"
@@ -233,7 +233,7 @@ function CreateTrip() {
             )}
           </motion.div>
 
-          <div className="flex items-center justify-between mt-10">
+          <div className="mt-8 flex flex-col-reverse items-stretch gap-5 sm:mt-10 sm:flex-row sm:items-center sm:justify-between sm:gap-0">
             <button
               type="button"
               onClick={() => setStep((s) => Math.max(1, s - 1))}
@@ -246,7 +246,7 @@ function CreateTrip() {
               type="button"
               onClick={handleNext}
               disabled={!stepComplete || submitting}
-              className="group bg-gold text-midnight px-8 py-4 text-[11px] uppercase tracking-luxury font-semibold hover:bg-sand transition-colors shadow-gold flex items-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="group inline-flex w-full items-center justify-center gap-3 bg-gold px-6 py-4 text-[10px] font-semibold uppercase tracking-luxury text-midnight shadow-gold transition-colors hover:bg-sand disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto sm:px-8 sm:text-[11px]"
             >
               {submitting && <Loader2 className="size-4 animate-spin" />}
               {step < 3 ? "Continue" : submitting ? "Opening chapter" : "Create trip"}

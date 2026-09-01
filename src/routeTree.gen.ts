@@ -25,6 +25,7 @@ import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as AlbumSlugRouteImport } from './routes/album.$slug'
 import { Route as TripSlugRouteImport } from './routes/trip.$slug'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
+import { Route as TripSlugImagesRouteImport } from './routes/trip.$slug.images'
 import { Route as TripSlugProcessingRouteImport } from './routes/trip.$slug.processing'
 
 const IndexRoute = IndexRouteImport.update({
@@ -107,6 +108,11 @@ const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
   path: '/auth/google/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TripSlugImagesRoute = TripSlugImagesRouteImport.update({
+  id: '/images',
+  path: '/images',
+  getParentRoute: () => TripSlugRoute,
+} as any)
 const TripSlugProcessingRoute = TripSlugProcessingRouteImport.update({
   id: '/processing',
   path: '/processing',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/album/$slug': typeof AlbumSlugRoute
   '/trip/$slug': typeof TripSlugRouteWithChildren
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/trip/$slug/images': typeof TripSlugImagesRoute
   '/trip/$slug/processing': typeof TripSlugProcessingRoute
 }
 export interface FileRoutesByTo {
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/album/$slug': typeof AlbumSlugRoute
   '/trip/$slug': typeof TripSlugRouteWithChildren
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/trip/$slug/images': typeof TripSlugImagesRoute
   '/trip/$slug/processing': typeof TripSlugProcessingRoute
 }
 export interface FileRoutesById {
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/album/$slug': typeof AlbumSlugRoute
   '/trip/$slug': typeof TripSlugRouteWithChildren
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/trip/$slug/images': typeof TripSlugImagesRoute
   '/trip/$slug/processing': typeof TripSlugProcessingRoute
 }
 export interface FileRouteTypes {
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/album/$slug'
     | '/trip/$slug'
     | '/auth/google/callback'
+    | '/trip/$slug/images'
     | '/trip/$slug/processing'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/album/$slug'
     | '/trip/$slug'
     | '/auth/google/callback'
+    | '/trip/$slug/images'
     | '/trip/$slug/processing'
   id:
     | '__root__'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/album/$slug'
     | '/trip/$slug'
     | '/auth/google/callback'
+    | '/trip/$slug/images'
     | '/trip/$slug/processing'
   fileRoutesById: FileRoutesById
 }
@@ -364,6 +376,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthGoogleCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trip/$slug/images': {
+      id: '/trip/$slug/images'
+      path: '/images'
+      fullPath: '/trip/$slug/images'
+      preLoaderRoute: typeof TripSlugImagesRouteImport
+      parentRoute: typeof TripSlugRoute
+    }
     '/trip/$slug/processing': {
       id: '/trip/$slug/processing'
       path: '/processing'
@@ -375,10 +394,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface TripSlugRouteChildren {
+  TripSlugImagesRoute: typeof TripSlugImagesRoute
   TripSlugProcessingRoute: typeof TripSlugProcessingRoute
 }
 
 const TripSlugRouteChildren: TripSlugRouteChildren = {
+  TripSlugImagesRoute: TripSlugImagesRoute,
   TripSlugProcessingRoute: TripSlugProcessingRoute,
 }
 
