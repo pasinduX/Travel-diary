@@ -21,7 +21,7 @@ interface GeoapifyFeature {
   };
 }
 
-const GEOAPIFY_KEY = import.meta.env.NEXT_PUBLIC_GEOAPIFY_KEY as string | undefined;
+const NEXT_PUBLIC_GEOAPIFY_KEY = import.meta.env.NEXT_PUBLIC_GEOAPIFY_KEY as string | undefined;
 
 export function DestinationAutocomplete({ value, onChange }: DestinationAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<DestinationSuggestion[]>([]);
@@ -32,7 +32,7 @@ export function DestinationAutocomplete({ value, onChange }: DestinationAutocomp
 
   useEffect(() => {
     const query = value.trim();
-    if (!GEOAPIFY_KEY || query.length < 2) {
+    if (!NEXT_PUBLIC_GEOAPIFY_KEY || query.length < 2) {
       setSuggestions([]);
       setLoading(false);
       return;
@@ -42,7 +42,7 @@ export function DestinationAutocomplete({ value, onChange }: DestinationAutocomp
     const timeout = setTimeout(async () => {
       setLoading(true);
       try {
-        const params = new URLSearchParams({ text: query, apiKey: GEOAPIFY_KEY, limit: "5" });
+        const params = new URLSearchParams({ text: query, apiKey: NEXT_PUBLIC_GEOAPIFY_KEY, limit: "5" });
         const response = await fetch(
           `https://api.geoapify.com/v1/geocode/autocomplete?${params.toString()}`,
           { signal: controller.signal },
