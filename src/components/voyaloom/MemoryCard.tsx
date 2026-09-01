@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { Loader2, Trash2 } from "lucide-react";
 
 interface MemoryCardProps {
   to: string;
@@ -8,9 +9,22 @@ interface MemoryCardProps {
   date: string;
   moments: number;
   mood?: string;
+  momentLabel?: string;
+  onDelete?: () => void;
+  deleting?: boolean;
 }
 
-export function MemoryCard({ to, image, title, date, moments, mood }: MemoryCardProps) {
+export function MemoryCard({
+  to,
+  image,
+  title,
+  date,
+  moments,
+  mood,
+  momentLabel = "moments",
+  onDelete,
+  deleting = false,
+}: MemoryCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -38,7 +52,9 @@ export function MemoryCard({ to, image, title, date, moments, mood }: MemoryCard
           <div className="absolute bottom-0 left-0 right-0 p-7">
             <p className="text-[10px] uppercase tracking-ultra text-gold mb-2">{date}</p>
             <h3 className="font-serif text-3xl text-sand mb-2 leading-tight">{title}</h3>
-            <p className="text-xs text-sand/50">{moments} moments</p>
+            <p className="text-xs text-sand/50">
+              {moments} {momentLabel}
+            </p>
             <motion.div
               variants={{ hover: { width: "100%" } }}
               initial={{ width: "20%" }}
@@ -48,6 +64,21 @@ export function MemoryCard({ to, image, title, date, moments, mood }: MemoryCard
           </div>
         </div>
       </Link>
+      {onDelete && (
+        <button
+          type="button"
+          aria-label={`Delete ${title}`}
+          disabled={deleting}
+          onClick={onDelete}
+          className="absolute right-5 top-16 inline-flex size-9 items-center justify-center rounded-full border border-white/20 bg-midnight/75 text-sand/70 opacity-100 transition-colors hover:border-ember hover:text-ember focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:cursor-wait disabled:opacity-60 md:opacity-0 md:group-hover:opacity-100"
+        >
+          {deleting ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : (
+            <Trash2 className="size-3.5" />
+          )}
+        </button>
+      )}
     </motion.div>
   );
 }

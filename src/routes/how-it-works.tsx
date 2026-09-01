@@ -3,6 +3,7 @@ import { LuxuryNavbar } from "@/components/voyaloom/LuxuryNavbar";
 import { CinematicFooter } from "@/components/voyaloom/CinematicFooter";
 import { ldJson, seo } from "@/lib/seo/seo";
 import { breadcrumbLd } from "@/lib/seo/structured-data";
+import { useAuth } from "@/lib/auth/use-auth";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => {
@@ -62,6 +63,9 @@ const STEPS = [
 ];
 
 function HowItWorks() {
+  const { isAuthenticated } = useAuth();
+  const ctaPath = isAuthenticated ? "/dashboard" : "/get-started";
+
   return (
     <div className="bg-midnight text-sand min-h-screen">
       <LuxuryNavbar />
@@ -114,7 +118,7 @@ function HowItWorks() {
 
         <div className="mt-20 flex flex-wrap gap-4">
           <Link
-            to="/get-started"
+            to={ctaPath}
             className="inline-block bg-gold text-midnight px-10 py-4 text-[11px] uppercase tracking-luxury font-semibold hover:bg-sand transition-colors shadow-gold"
           >
             Create your album — free

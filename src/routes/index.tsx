@@ -7,9 +7,11 @@ import { MemoryCard } from "@/components/voyaloom/MemoryCard";
 import { AnimatedQuote } from "@/components/voyaloom/AnimatedQuote";
 import { FloatingGallery } from "@/components/voyaloom/FloatingGallery";
 import { FaqList } from "@/components/voyaloom/FaqList";
+import { PricingSection } from "@/components/voyaloom/PricingSection";
 import { ldJson, seo } from "@/lib/seo/seo";
 import { FAQ_ITEMS } from "@/lib/seo/faq";
 import { faqPageLd, softwareApplicationLd } from "@/lib/seo/structured-data";
+import { useAuth } from "@/lib/auth/use-auth";
 import amalfi from "@/assets/amalfi-boat.jpg";
 import iceland from "@/assets/iceland-beach.jpg";
 import morocco from "@/assets/morocco-riad.jpg";
@@ -36,13 +38,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const { isAuthenticated } = useAuth();
+  const ctaPath = isAuthenticated ? "/dashboard" : "/get-started";
+
   return (
     <div className="bg-midnight text-sand min-h-screen">
       <LuxuryNavbar />
       <CinematicHero />
 
       {/* What is VoyaLoom — answer-first */}
-      <section className="py-28 px-6 md:px-12 max-w-4xl mx-auto">
+      <section className="py-20 md:py-28 px-6 md:px-12 max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -52,7 +57,7 @@ function Landing() {
           <span className="text-[10px] uppercase tracking-ultra text-gold mb-6 block">
             What is VoyaLoom?
           </span>
-          <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-6">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl leading-tight mb-6">
             An AI travel album generator that works with your real photos.
           </h2>
           <p className="text-sand/60 font-light leading-relaxed text-lg">
@@ -66,19 +71,19 @@ function Landing() {
       </section>
 
       {/* Featured sample albums */}
-      <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+      <section className="py-20 md:py-24 px-6 md:px-12 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="flex items-end justify-between mb-16 border-b border-white/10 pb-8"
+          className="flex items-end justify-between mb-10 md:mb-16 border-b border-white/10 pb-6 md:pb-8"
         >
           <div>
             <span className="text-[10px] uppercase tracking-ultra text-gold mb-4 block">
               Sample albums
             </span>
-            <h2 className="font-serif text-5xl md:text-6xl leading-tight max-w-2xl">
+            <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl leading-tight max-w-2xl">
               What a finished VoyaLoom album looks like.
             </h2>
           </div>
@@ -113,7 +118,7 @@ function Landing() {
       </section>
 
       {/* Quote */}
-      <section className="py-32 px-8 border-y border-white/5 bg-charcoal/30 relative grain">
+      <section className="py-20 md:py-32 px-6 sm:px-8 border-y border-white/5 bg-charcoal/30 relative grain">
         <AnimatedQuote
           text="It felt less like looking at my photos and more like watching a documentary of my own trip."
           author="An early VoyaLoom traveler"
@@ -121,7 +126,7 @@ function Landing() {
       </section>
 
       {/* Floating gallery */}
-      <section className="py-32 px-8 relative overflow-hidden">
+      <section className="py-20 md:py-32 px-4 sm:px-8 relative overflow-hidden">
         <FloatingGallery
           images={[
             { src: tokyo, alt: "Neon-lit alley in Tokyo at night" },
@@ -134,23 +139,23 @@ function Landing() {
       </section>
 
       {/* How it works */}
-      <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto">
+      <section className="py-20 md:py-32 px-6 md:px-12 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="mb-20"
+          className="mb-12 md:mb-20"
         >
           <span className="text-[10px] uppercase tracking-ultra text-gold mb-4 block">
             How VoyaLoom works
           </span>
-          <h2 className="font-serif text-5xl md:text-6xl leading-tight max-w-3xl">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl leading-tight max-w-3xl">
             From a full camera roll to a finished album.
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
           {[
             {
               n: "01",
@@ -177,7 +182,7 @@ function Landing() {
               className="relative"
             >
               <span className="font-serif italic text-gold/40 text-7xl">{s.n}</span>
-              <h3 className="font-serif text-3xl mt-4 mb-4">{s.t}</h3>
+              <h3 className="font-serif text-2xl sm:text-3xl mt-4 mb-4">{s.t}</h3>
               <p className="text-sand/60 font-light leading-relaxed">{s.d}</p>
             </motion.div>
           ))}
@@ -194,8 +199,8 @@ function Landing() {
       </section>
 
       {/* What VoyaLoom does with your photos — AI clarification */}
-      <section className="py-32 px-6 md:px-12 bg-charcoal/30 border-y border-white/5">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16">
+      <section className="py-20 md:py-32 px-6 md:px-12 bg-charcoal/30 border-y border-white/5">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -233,29 +238,10 @@ function Landing() {
         </div>
       </section>
 
-      {/* Free usage */}
-      <section className="py-28 px-6 md:px-12 max-w-4xl mx-auto text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-        >
-          <span className="text-[10px] uppercase tracking-ultra text-gold mb-6 block">
-            Free to use
-          </span>
-          <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-6">
-            VoyaLoom is currently free.
-          </h2>
-          <p className="text-sand/60 font-light leading-relaxed text-lg">
-            You can upload up to 100 images and create up to 2 trips per account at no cost. There
-            are no paid plans right now — just create an account and start your first album.
-          </p>
-        </motion.div>
-      </section>
+      <PricingSection />
 
       {/* FAQ */}
-      <section className="py-28 px-6 md:px-12 max-w-4xl mx-auto">
+      <section className="py-20 md:py-28 px-6 md:px-12 max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -266,7 +252,7 @@ function Landing() {
           <span className="text-[10px] uppercase tracking-ultra text-gold mb-4 block">
             Frequently asked questions
           </span>
-          <h2 className="font-serif text-5xl md:text-6xl leading-tight">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl leading-tight">
             Common questions about VoyaLoom.
           </h2>
         </motion.div>
@@ -284,7 +270,7 @@ function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="relative py-40 px-8 overflow-hidden">
+      <section className="relative py-24 md:py-40 px-6 sm:px-8 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={bonfire} alt="" className="w-full h-full object-cover opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-b from-midnight via-midnight/70 to-midnight" />
@@ -296,16 +282,16 @@ function Landing() {
           transition={{ duration: 1.2 }}
           className="relative z-10 max-w-3xl mx-auto text-center"
         >
-          <h2 className="font-serif text-5xl md:text-7xl leading-tight mb-8">
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-7xl leading-tight mb-8">
             Turn your last trip into an album.
           </h2>
-          <p className="text-sand/60 mb-12 max-w-xl mx-auto">
+          <p className="text-sand/60 mb-8 md:mb-12 max-w-xl mx-auto">
             Upload your photos and let AI do the sorting, curating, and storytelling. Free for up to
             100 images and 2 trips.
           </p>
           <Link
-            to="/get-started"
-            className="inline-block bg-gold text-midnight px-12 py-5 text-xs uppercase tracking-luxury font-semibold hover:bg-sand transition-all shadow-gold"
+            to={ctaPath}
+            className="inline-block bg-gold text-midnight px-8 sm:px-12 py-4 sm:py-5 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-luxury font-semibold hover:bg-sand transition-all shadow-gold"
           >
             Create your album — free
           </Link>

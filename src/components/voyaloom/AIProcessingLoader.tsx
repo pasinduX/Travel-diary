@@ -1,13 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-const stages = [
-  "Analyzing memories",
-  "Detecting emotions",
-  "Grouping cinematic scenes",
-  "Generating travel story",
-  "Composing your album",
-];
+const stages = ["Sending your photographs", "Securing your upload", "Starting image analysis"];
 
 export function AIProcessingLoader() {
   const [active, setActive] = useState(0);
@@ -32,9 +26,7 @@ export function AIProcessingLoader() {
           </span>
         </div>
       </div>
-      <h2 className="font-serif text-4xl md:text-5xl text-sand mb-10">
-        Crafting your cinematic narrative
-      </h2>
+      <h2 className="font-serif text-4xl md:text-5xl text-sand mb-10">Preparing your journey</h2>
       <div className="space-y-3">
         {stages.map((stage, i) => (
           <motion.div

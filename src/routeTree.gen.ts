@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CreateTripRouteImport } from './routes/create-trip'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -24,10 +25,16 @@ import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as AlbumSlugRouteImport } from './routes/album.$slug'
 import { Route as TripSlugRouteImport } from './routes/trip.$slug'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
+import { Route as TripSlugProcessingRouteImport } from './routes/trip.$slug.processing'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CreateTripRoute = CreateTripRouteImport.update({
@@ -100,9 +107,15 @@ const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
   path: '/auth/google/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TripSlugProcessingRoute = TripSlugProcessingRouteImport.update({
+  id: '/processing',
+  path: '/processing',
+  getParentRoute: () => TripSlugRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
   '/create-trip': typeof CreateTripRoute
   '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
@@ -115,11 +128,13 @@ export interface FileRoutesByFullPath {
   '/upload': typeof UploadRoute
   '/verify': typeof VerifyRoute
   '/album/$slug': typeof AlbumSlugRoute
-  '/trip/$slug': typeof TripSlugRoute
+  '/trip/$slug': typeof TripSlugRouteWithChildren
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/trip/$slug/processing': typeof TripSlugProcessingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
   '/create-trip': typeof CreateTripRoute
   '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
@@ -132,12 +147,14 @@ export interface FileRoutesByTo {
   '/upload': typeof UploadRoute
   '/verify': typeof VerifyRoute
   '/album/$slug': typeof AlbumSlugRoute
-  '/trip/$slug': typeof TripSlugRoute
+  '/trip/$slug': typeof TripSlugRouteWithChildren
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/trip/$slug/processing': typeof TripSlugProcessingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
   '/create-trip': typeof CreateTripRoute
   '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
@@ -150,13 +167,15 @@ export interface FileRoutesById {
   '/upload': typeof UploadRoute
   '/verify': typeof VerifyRoute
   '/album/$slug': typeof AlbumSlugRoute
-  '/trip/$slug': typeof TripSlugRoute
+  '/trip/$slug': typeof TripSlugRouteWithChildren
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/trip/$slug/processing': typeof TripSlugProcessingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/contact'
     | '/create-trip'
     | '/dashboard'
     | '/faq'
@@ -171,9 +190,11 @@ export interface FileRouteTypes {
     | '/album/$slug'
     | '/trip/$slug'
     | '/auth/google/callback'
+    | '/trip/$slug/processing'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/contact'
     | '/create-trip'
     | '/dashboard'
     | '/faq'
@@ -188,9 +209,11 @@ export interface FileRouteTypes {
     | '/album/$slug'
     | '/trip/$slug'
     | '/auth/google/callback'
+    | '/trip/$slug/processing'
   id:
     | '__root__'
     | '/'
+    | '/contact'
     | '/create-trip'
     | '/dashboard'
     | '/faq'
@@ -205,10 +228,12 @@ export interface FileRouteTypes {
     | '/album/$slug'
     | '/trip/$slug'
     | '/auth/google/callback'
+    | '/trip/$slug/processing'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ContactRoute: typeof ContactRoute
   CreateTripRoute: typeof CreateTripRoute
   DashboardRoute: typeof DashboardRoute
   FaqRoute: typeof FaqRoute
@@ -221,7 +246,7 @@ export interface RootRouteChildren {
   UploadRoute: typeof UploadRoute
   VerifyRoute: typeof VerifyRoute
   AlbumSlugRoute: typeof AlbumSlugRoute
-  TripSlugRoute: typeof TripSlugRoute
+  TripSlugRoute: typeof TripSlugRouteWithChildren
   AuthGoogleCallbackRoute: typeof AuthGoogleCallbackRoute
 }
 
@@ -232,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/create-trip': {
@@ -332,11 +364,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthGoogleCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trip/$slug/processing': {
+      id: '/trip/$slug/processing'
+      path: '/processing'
+      fullPath: '/trip/$slug/processing'
+      preLoaderRoute: typeof TripSlugProcessingRouteImport
+      parentRoute: typeof TripSlugRoute
+    }
   }
 }
 
+interface TripSlugRouteChildren {
+  TripSlugProcessingRoute: typeof TripSlugProcessingRoute
+}
+
+const TripSlugRouteChildren: TripSlugRouteChildren = {
+  TripSlugProcessingRoute: TripSlugProcessingRoute,
+}
+
+const TripSlugRouteWithChildren = TripSlugRoute._addFileChildren(
+  TripSlugRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ContactRoute: ContactRoute,
   CreateTripRoute: CreateTripRoute,
   DashboardRoute: DashboardRoute,
   FaqRoute: FaqRoute,
@@ -349,7 +401,7 @@ const rootRouteChildren: RootRouteChildren = {
   UploadRoute: UploadRoute,
   VerifyRoute: VerifyRoute,
   AlbumSlugRoute: AlbumSlugRoute,
-  TripSlugRoute: TripSlugRoute,
+  TripSlugRoute: TripSlugRouteWithChildren,
   AuthGoogleCallbackRoute: AuthGoogleCallbackRoute,
 }
 export const routeTree = rootRouteImport

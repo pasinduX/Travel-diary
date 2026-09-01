@@ -5,6 +5,7 @@ import { FaqList } from "@/components/voyaloom/FaqList";
 import { FAQ_ITEMS } from "@/lib/seo/faq";
 import { ldJson, seo } from "@/lib/seo/seo";
 import { breadcrumbLd, faqPageLd } from "@/lib/seo/structured-data";
+import { useAuth } from "@/lib/auth/use-auth";
 
 export const Route = createFileRoute("/faq")({
   head: () => {
@@ -32,6 +33,9 @@ export const Route = createFileRoute("/faq")({
 });
 
 function Faq() {
+  const { isAuthenticated } = useAuth();
+  const ctaPath = isAuthenticated ? "/dashboard" : "/get-started";
+
   return (
     <div className="bg-midnight text-sand min-h-screen">
       <LuxuryNavbar />
@@ -52,7 +56,7 @@ function Faq() {
 
         <div className="mt-14 flex flex-wrap gap-4">
           <Link
-            to="/get-started"
+            to={ctaPath}
             className="inline-block bg-gold text-midnight px-10 py-4 text-[11px] uppercase tracking-luxury font-semibold hover:bg-sand transition-colors shadow-gold"
           >
             Create your album — free

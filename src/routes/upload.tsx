@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { X, ImagePlus, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -9,7 +10,7 @@ import { CinematicFooter } from "@/components/voyaloom/CinematicFooter";
 import { UploadDropzone } from "@/components/voyaloom/UploadDropzone";
 import { AIProcessingLoader } from "@/components/voyaloom/AIProcessingLoader";
 import { requireAuth } from "@/lib/auth/guards";
-import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_BYTES, type TripImage } from "@/interface/trip-image";
+import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_BYTES } from "@/interface/trip-image";
 import { uploadTripImagesFn } from "@/services/trip-image.functions";
 import { seo } from "@/lib/seo/seo";
 
@@ -33,10 +34,10 @@ interface Picked {
 }
 
 function Upload() {
+  const navigate = useNavigate();
   const { trip: tripId } = Route.useSearch();
-  const [stage, setStage] = useState<"upload" | "processing" | "done">("upload");
+  const [stage, setStage] = useState<"upload" | "processing">("upload");
   const [picked, setPicked] = useState<Picked[]>([]);
-  const [uploaded, setUploaded] = useState<TripImage[]>([]);
 
   // Release every object URL we created, once, on unmount.
   const pickedRef = useRef<Picked[]>([]);
@@ -100,9 +101,6 @@ function Upload() {
     setStage("processing");
     try {
       const { uploaded: result, failed } = await uploadTripImagesFn({ data: form });
-      setUploaded(result);
-      setStage("done");
-
       const n = result.length;
       toast.success(`${n} memor${n === 1 ? "y" : "ies"} uploaded.`);
       if (failed.length > 0) {
@@ -110,6 +108,7 @@ function Upload() {
           `${failed.length} couldn't be uploaded: ${failed.map((f) => f.fileName).join(", ")}`,
         );
       }
+      await navigate({ to: "/trip/$slug/processing", params: { slug: tripId } });
     } catch (error) {
       setStage("upload");
       toast.error(error instanceof Error ? error.message : "The upload failed.");
@@ -223,65 +222,6 @@ function Upload() {
               while, don't close this tab
             </p>
           </div>
-        )}
-
-        {stage === "done" && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1 }}
-            className="text-center py-16"
-          >
-            <div className="inline-flex size-20 rounded-full bg-gold/10 border border-gold/30 mb-8 items-center justify-center">
-              <span className="font-serif italic text-gold text-3xl">✓</span>
-            </div>
-            <h2 className="font-serif text-4xl mb-4">
-              {uploaded.length} memor{uploaded.length === 1 ? "y" : "ies"} saved.
-            </h2>
-
-            {uploaded.length > 0 && (
-              <div className="mt-10 mb-12 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                {uploaded.map((img) => (
-                  <div
-                    key={img.id}
-                    className="aspect-square overflow-hidden rounded-sm bg-charcoal/40"
-                  >
-                    {img.s3Url ? (
-                      <img
-                        src={img.s3Url}
-                        alt={img.fileName}
-                        loading="lazy"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : null}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  clearPicked();
-                  setUploaded([]);
-                  setStage("upload");
-                }}
-                className="border border-white/20 px-8 py-4 text-[11px] uppercase tracking-luxury hover:bg-white/5 transition-colors"
-              >
-                Add more
-              </button>
-              {tripId && (
-                <Link
-                  to="/trip/$slug"
-                  params={{ slug: tripId }}
-                  className="inline-block bg-gold text-midnight px-10 py-4 text-[11px] uppercase tracking-luxury font-semibold hover:bg-sand transition-colors shadow-gold"
-                >
-                  Open trip
-                </Link>
-              )}
-            </div>
-          </motion.div>
         )}
       </section>
 
