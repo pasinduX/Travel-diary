@@ -1,11 +1,18 @@
+import { RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
 import type { TripAnalysisStatus } from "@/interface/trip-analysis";
 
 interface TripAnalysisProgressProps {
   status: TripAnalysisStatus;
+  onRetry?: () => void;
+  retrying?: boolean;
 }
 
-export function TripAnalysisProgress({ status }: TripAnalysisProgressProps) {
+export function TripAnalysisProgress({
+  status,
+  onRetry,
+  retrying = false,
+}: TripAnalysisProgressProps) {
   const hasFailures = status.failed > 0;
   const percentage = Math.round(status.percentage);
 
@@ -32,19 +39,33 @@ export function TripAnalysisProgress({ status }: TripAnalysisProgressProps) {
           : getProgressMessage(status)}
       </p>
 
-      <div
-        className="h-1 overflow-hidden bg-white/10"
-        role="progressbar"
-        aria-valuenow={percentage}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${percentage}%` }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="h-full bg-gold"
-        />
+      <div className="flex items-center gap-3">
+        <div
+          className="h-1 min-w-0 flex-1 overflow-hidden bg-white/10"
+          role="progressbar"
+          aria-valuenow={percentage}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${percentage}%` }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="h-full bg-gold"
+          />
+        </div>
+        {status.failed > 0 && onRetry && (
+          <button
+            type="button"
+            onClick={onRetry}
+            disabled={retrying}
+            aria-label={`Retry ${status.failed} failed photograph${status.failed === 1 ? "" : "s"}`}
+            title="Retry failed photographs"
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-gold/40 text-gold transition-colors hover:border-gold hover:bg-gold/10 disabled:cursor-wait disabled:opacity-60"
+          >
+            <RotateCcw className={retrying ? "size-3.5 animate-spin" : "size-3.5"} />
+          </button>
+        )}
       </div>
       <div className="mt-4 flex flex-wrap justify-between gap-3 text-[10px] uppercase tracking-luxury text-sand/40">
         <span>

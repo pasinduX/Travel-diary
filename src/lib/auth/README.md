@@ -17,6 +17,10 @@ lib/auth/
   use-auth.ts            client hook: user + login/register/logout
   use-current-user.ts    reads user from root route context
   google.ts              builds the public Google redirect URL
+components/auth/
+  Auth0Provider.tsx      Auth0 SPA provider and refresh-token setup
+routes/auth.auth0.callback.tsx
+                          Auth0 callback → sealed app session
 ```
 
 ## Token handling
@@ -39,12 +43,36 @@ Set in `.env` (see `.env.example`):
 - `API_URL` – server-only backend base URL (defaults to `VITE_API_URL`).
 - `SESSION_SECRET` – ≥32 chars, encrypts the session cookie. `openssl rand -hex 32`.
 
-## Google OAuth
+## Auth0
 
-`startGoogleSignIn()` navigates to `${VITE_API_URL}/api/v1/auth/google`. This
-code assumes the backend, after handling Google's callback, redirects back to
-this app at `/auth/google/callback?code=&state=`; that route
-(`routes/auth.google.callback.tsx`) forwards the pair to the backend, stores the
-session and continues to `/dashboard`. If your backend instead finishes the flow
-itself, point its post-login redirect straight at `/dashboard` and delete that
-route.
+The login and signup pages use Auth0 Universal Login. Auth0 returns an access
+token for `VITE_AUTH0_AUDIENCE`; the callback sends that token through a
+same-origin server function, where it is stored in the sealed session cookie.
+Protected server functions then forward it as:
+
+```http
+Authorization: Bearer <Auth0 access token>
+```
+
+The backend must validate the token on every protected endpoint using the Auth0
+tenant's JWKS, issuer (`https://<domain>/`), and configured API audience. It
+must also enforce scopes/permissions for each operation. A frontend session or
+user object must never be treated as proof of authorization.
+
+Required Auth0 application settings:
+
+- Allowed Callback URLs: `http://localhost:8080/auth/auth0/callback` and the production equivalent.
+- Allowed Logout URLs: the local and production app origins.
+- Allowed Web Origins: the local and production app origins.
+- Enable whichever Auth0 connections and authentication methods you want to expose in Universal Login.
+
+Required environment variables are listed in `.env.example`:
+
+- `VITE_AUTH0_DOMAIN`
+- `VITE_AUTH0_CLIENT_ID`
+- `VITE_AUTH0_AUDIENCE` (must match the backend API identifier)
+- `VITE_AUTH0_REDIRECT_URI`
+
+The backend also needs to accept Auth0 JWTs on `/api/v1/trips`, album/image,
+pricing, and analysis endpoints. Local username/password and custom Google
+authentication endpoints are no longer used by this application.

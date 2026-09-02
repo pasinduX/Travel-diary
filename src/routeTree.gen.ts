@@ -24,7 +24,8 @@ import { Route as UploadRouteImport } from './routes/upload'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as AlbumSlugRouteImport } from './routes/album.$slug'
 import { Route as TripSlugRouteImport } from './routes/trip.$slug'
-import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
+import { Route as ApiV1SplatRouteImport } from './routes/api/v1/$'
+import { Route as AuthAuth0CallbackRouteImport } from './routes/auth.auth0.callback'
 import { Route as TripSlugImagesRouteImport } from './routes/trip.$slug.images'
 import { Route as TripSlugProcessingRouteImport } from './routes/trip.$slug.processing'
 
@@ -103,9 +104,14 @@ const TripSlugRoute = TripSlugRouteImport.update({
   path: '/trip/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
-  id: '/auth/google/callback',
-  path: '/auth/google/callback',
+const ApiV1SplatRoute = ApiV1SplatRouteImport.update({
+  id: '/api/v1/$',
+  path: '/api/v1/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthAuth0CallbackRoute = AuthAuth0CallbackRouteImport.update({
+  id: '/auth/auth0/callback',
+  path: '/auth/auth0/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TripSlugImagesRoute = TripSlugImagesRouteImport.update({
@@ -135,7 +141,8 @@ export interface FileRoutesByFullPath {
   '/verify': typeof VerifyRoute
   '/album/$slug': typeof AlbumSlugRoute
   '/trip/$slug': typeof TripSlugRouteWithChildren
-  '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
+  '/auth/auth0/callback': typeof AuthAuth0CallbackRoute
   '/trip/$slug/images': typeof TripSlugImagesRoute
   '/trip/$slug/processing': typeof TripSlugProcessingRoute
 }
@@ -155,7 +162,8 @@ export interface FileRoutesByTo {
   '/verify': typeof VerifyRoute
   '/album/$slug': typeof AlbumSlugRoute
   '/trip/$slug': typeof TripSlugRouteWithChildren
-  '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
+  '/auth/auth0/callback': typeof AuthAuth0CallbackRoute
   '/trip/$slug/images': typeof TripSlugImagesRoute
   '/trip/$slug/processing': typeof TripSlugProcessingRoute
 }
@@ -176,7 +184,8 @@ export interface FileRoutesById {
   '/verify': typeof VerifyRoute
   '/album/$slug': typeof AlbumSlugRoute
   '/trip/$slug': typeof TripSlugRouteWithChildren
-  '/auth/google/callback': typeof AuthGoogleCallbackRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
+  '/auth/auth0/callback': typeof AuthAuth0CallbackRoute
   '/trip/$slug/images': typeof TripSlugImagesRoute
   '/trip/$slug/processing': typeof TripSlugProcessingRoute
 }
@@ -198,7 +207,8 @@ export interface FileRouteTypes {
     | '/verify'
     | '/album/$slug'
     | '/trip/$slug'
-    | '/auth/google/callback'
+    | '/api/v1/$'
+    | '/auth/auth0/callback'
     | '/trip/$slug/images'
     | '/trip/$slug/processing'
   fileRoutesByTo: FileRoutesByTo
@@ -218,7 +228,8 @@ export interface FileRouteTypes {
     | '/verify'
     | '/album/$slug'
     | '/trip/$slug'
-    | '/auth/google/callback'
+    | '/api/v1/$'
+    | '/auth/auth0/callback'
     | '/trip/$slug/images'
     | '/trip/$slug/processing'
   id:
@@ -238,7 +249,8 @@ export interface FileRouteTypes {
     | '/verify'
     | '/album/$slug'
     | '/trip/$slug'
-    | '/auth/google/callback'
+    | '/api/v1/$'
+    | '/auth/auth0/callback'
     | '/trip/$slug/images'
     | '/trip/$slug/processing'
   fileRoutesById: FileRoutesById
@@ -259,7 +271,8 @@ export interface RootRouteChildren {
   VerifyRoute: typeof VerifyRoute
   AlbumSlugRoute: typeof AlbumSlugRoute
   TripSlugRoute: typeof TripSlugRouteWithChildren
-  AuthGoogleCallbackRoute: typeof AuthGoogleCallbackRoute
+  ApiV1SplatRoute: typeof ApiV1SplatRoute
+  AuthAuth0CallbackRoute: typeof AuthAuth0CallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -369,11 +382,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/google/callback': {
-      id: '/auth/google/callback'
-      path: '/auth/google/callback'
-      fullPath: '/auth/google/callback'
-      preLoaderRoute: typeof AuthGoogleCallbackRouteImport
+    '/api/v1/$': {
+      id: '/api/v1/$'
+      path: '/api/v1/$'
+      fullPath: '/api/v1/$'
+      preLoaderRoute: typeof ApiV1SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/auth0/callback': {
+      id: '/auth/auth0/callback'
+      path: '/auth/auth0/callback'
+      fullPath: '/auth/auth0/callback'
+      preLoaderRoute: typeof AuthAuth0CallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/trip/$slug/images': {
@@ -423,7 +443,8 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyRoute: VerifyRoute,
   AlbumSlugRoute: AlbumSlugRoute,
   TripSlugRoute: TripSlugRouteWithChildren,
-  AuthGoogleCallbackRoute: AuthGoogleCallbackRoute,
+  ApiV1SplatRoute: ApiV1SplatRoute,
+  AuthAuth0CallbackRoute: AuthAuth0CallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

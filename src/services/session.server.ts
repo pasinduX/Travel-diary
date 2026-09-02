@@ -1,9 +1,9 @@
 /**
  * Session management. Server-only.
  *
- * The backend hands us an access token + refresh token in its JSON responses.
- * We never expose those to the browser. Instead they are stored — together
- * with the user record — inside an AES-encrypted, signed, httpOnly cookie
+ * The Auth0 access token never reaches application JavaScript after the
+ * callback. It is stored with the user record inside an AES-encrypted,
+ * signed, httpOnly cookie
  * ("sealed session") managed by TanStack Start's `useSession`.
  *
  * The browser only ever sees the opaque sealed blob; JS on the page cannot
@@ -19,14 +19,10 @@ import {
   type User,
 } from "@/interface/auth";
 
-import * as authService from "./auth.service";
 import { getAuthEnv } from "./env.server";
 
 const SESSION_NAME = "voyaloom_session";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
-/** Refresh the access token if it expires within this window. */
-const REFRESH_SKEW_MS = 60_000;
-
 function authSession() {
   const { sessionSecret, isProduction } = getAuthEnv();
   // `useSession` is TanStack Start's server-side request helper, not a React
@@ -58,34 +54,17 @@ export async function destroySession(): Promise<void> {
 }
 
 /**
- * Return the signed-in user, or `null`. Transparently refreshes the backend
- * access token when it is about to expire; if the refresh token is rejected
- * the session is cleared.
+ * Return the Auth0-signed-in user, or `null`.
  */
 export async function getAuthenticatedUser(): Promise<User | null> {
   const session = await authSession();
   const payload = session.data;
 
-  if (!payload?.user || !payload.tokens?.accessToken || !payload.tokens?.refreshToken) {
+  if (!payload?.user || !payload.tokens?.accessToken) {
     return null;
   }
 
-  if (!needsRefresh(payload.tokens)) {
-    return payload.user;
-  }
-
-  try {
-    const tokens = await authService.refresh(payload.tokens.refreshToken);
-    await session.update({ tokens });
-    return payload.user;
-  } catch (error) {
-    if (error instanceof ApiError && (error.isUnauthorized || error.status === 400)) {
-      await session.clear();
-      return null;
-    }
-    // Transient failure (network / 5xx): keep the session, let the caller retry.
-    throw error;
-  }
+  return payload.user;
 }
 
 /**
@@ -97,20 +76,9 @@ export async function requireAccessToken(): Promise<string> {
   const session = await authSession();
   const payload = session.data;
 
-  if (!payload?.tokens?.refreshToken) {
+  if (!payload?.tokens?.accessToken) {
     throw new ApiError("Not authenticated.", 401);
   }
 
-  if (needsRefresh(payload.tokens)) {
-    const tokens = await authService.refresh(payload.tokens.refreshToken);
-    await session.update({ tokens });
-    return tokens.accessToken;
-  }
-
   return payload.tokens.accessToken;
-}
-
-function needsRefresh(tokens: AuthTokens): boolean {
-  if (tokens.accessTokenExpiresAt == null) return false;
-  return Date.now() >= tokens.accessTokenExpiresAt - REFRESH_SKEW_MS;
 }

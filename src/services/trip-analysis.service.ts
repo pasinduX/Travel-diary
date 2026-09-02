@@ -32,6 +32,14 @@ export async function getTripAnalysisStatus(
   };
 }
 
+export async function retryFailedTripAnalysis(token: string, tripId: string): Promise<number> {
+  const result = await apiRequest<{ retried?: number }>(
+    `/api/v1/trips/${encodeURIComponent(tripId)}/images/retry-analysis`,
+    { method: "POST", token },
+  );
+  return Number(result.retried ?? 0);
+}
+
 function clampPercentage(value: number | undefined, fallback: number): number {
   const percentage = Number(value ?? fallback);
   return Math.min(100, Math.max(0, Number.isFinite(percentage) ? percentage : 0));

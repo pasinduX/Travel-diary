@@ -4,11 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { PricingPlan } from "@/interface/pricing";
 import { useAuth } from "@/lib/auth/use-auth";
-import {
-  changePricingPlanFn,
-  getCurrentPricingPlanFn,
-  listPricingPlansFn,
-} from "@/services/pricing.functions";
+import { browserApiRequest } from "@/services/browser-api";
 
 export function PricingSection() {
   const { isAuthenticated } = useAuth();
@@ -22,8 +18,14 @@ export function PricingSection() {
     let cancelled = false;
 
     const requests: [Promise<PricingPlan[]>, Promise<PricingPlan | null>] = [
-      listPricingPlansFn(),
-      isAuthenticated ? getCurrentPricingPlanFn() : Promise.resolve(null),
+      browserApiRequest<{ data: PricingPlan[] }>("/api/v1/pricing").then(
+        (response) => response.data,
+      ),
+      isAuthenticated
+        ? browserApiRequest<{ data: PricingPlan }>("/api/v1/auth/plan").then(
+            (response) => response.data,
+          )
+        : Promise.resolve(null),
     ];
 
     Promise.all(requests)
@@ -52,7 +54,11 @@ export function PricingSection() {
 
     setUpdatingSlug(plan.slug);
     try {
-      const updatedPlan = await changePricingPlanFn({ data: { slug: plan.slug } });
+      const response = await browserApiRequest<{ data: PricingPlan }>("/api/v1/auth/plan", {
+        method: "PUT",
+        body: { slug: plan.slug },
+      });
+      const updatedPlan = response.data;
       setCurrentPlan(updatedPlan);
       toast.success(`You are now on the ${updatedPlan.name} plan.`);
     } catch (reason) {

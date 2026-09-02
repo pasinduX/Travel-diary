@@ -31,12 +31,12 @@ export function LuxuryNavbar() {
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       className="fixed top-0 left-0 right-0 z-50 bg-midnight/95 border-b border-white/10 px-4 sm:px-6 md:px-10 py-5 flex justify-between items-center"
     >
-      <Link
-        to="/"
-        className="font-serif italic text-xl sm:text-2xl tracking-tight text-sand shrink-0"
-        aria-label="VoyaLoom home"
-      >
-        VoyaLoom
+      <Link to="/" className="flex shrink-0 items-center" aria-label="VoyaLoom home">
+        <img
+          src="https://i.postimg.cc/rsQQnWN9/Chat-GPT-Image-Sep-2-2026-03-07-55-PM.png"
+          alt="VoyaLoom"
+          className="h-9 w-auto object-contain sm:h-10"
+        />
       </Link>
       <div className="ml-auto flex items-center gap-2 sm:gap-3 shrink-0">
         {isAuthenticated ? (

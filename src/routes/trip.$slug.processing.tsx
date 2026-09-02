@@ -10,7 +10,10 @@ import { requireAuth } from "@/lib/auth/guards";
 import type { AlbumPlan } from "@/interface/album";
 import type { TripAnalysisStatus } from "@/interface/trip-analysis";
 import { generateAlbumFn, getAlbumFn } from "@/services/album.functions";
-import { getTripAnalysisStatusFn } from "@/services/trip-analysis.functions";
+import {
+  getTripAnalysisStatusFn,
+  retryFailedTripAnalysisFn,
+} from "@/services/trip-analysis.functions";
 import { listTripImagesFn } from "@/services/trip-image.functions";
 import { seo } from "@/lib/seo/seo";
 
@@ -33,6 +36,8 @@ function TripProcessing() {
   );
   const [error, setError] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+  const [retryVersion, setRetryVersion] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,7 +86,7 @@ function TripProcessing() {
       cancelled = true;
       if (timeout) clearTimeout(timeout);
     };
-  }, [tripId]);
+  }, [tripId, retryVersion]);
 
   const ready = status?.readyToGenerate === true;
 
@@ -113,11 +118,42 @@ function TripProcessing() {
     }
   }
 
+  async function handleRetryFailedAnalysis() {
+    if (!status?.failed || retrying) return;
+    console.info("[VoyaLoom][Processing] retry failed analysis clicked", {
+      tripId,
+      failed: status.failed,
+    });
+    setRetrying(true);
+    try {
+      const result = await retryFailedTripAnalysisFn({ data: { tripId } });
+      console.info("[VoyaLoom][Processing] failed analysis requeued", {
+        tripId,
+        retried: result.retried,
+      });
+      setStatus(null);
+      setAlbum(null);
+      setError(null);
+      setRetryVersion((version) => version + 1);
+    } catch (reason) {
+      console.error("[VoyaLoom][Processing] failed analysis retry failed", { tripId, reason });
+      setError(reason instanceof Error ? reason.message : "Could not retry failed photographs.");
+    } finally {
+      setRetrying(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-midnight text-sand">
       <LuxuryNavbar />
       <main className="mx-auto max-w-5xl px-6 pb-32 pt-40 md:px-12">
-        {status && !album && <TripAnalysisProgress status={status} />}
+        {status && !album && (
+          <TripAnalysisProgress
+            status={status}
+            onRetry={() => void handleRetryFailedAnalysis()}
+            retrying={retrying}
+          />
+        )}
         {generating && <AlbumGenerationLoader />}
         {!status && !error && (
           <div className="flex min-h-[420px] flex-col items-center justify-center gap-4 text-sand/50">

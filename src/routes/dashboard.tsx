@@ -10,10 +10,9 @@ import { CinematicFooter } from "@/components/voyaloom/CinematicFooter";
 import { MemoryCard } from "@/components/voyaloom/MemoryCard";
 import { ConfirmDialog } from "@/components/voyaloom/ConfirmDialog";
 import type { DashboardData, DashboardTrip } from "@/services/dashboard.functions";
-import { getDashboardDataFn } from "@/services/dashboard.functions";
-import { deleteTripFn } from "@/services/trip.functions";
-import { getCurrentPricingPlanFn } from "@/services/pricing.functions";
+import { browserApiRequest } from "@/services/browser-api";
 import type { PricingPlan } from "@/interface/pricing";
+import type { Trip } from "@/interface/trip";
 import { seo } from "@/lib/seo/seo";
 import heroImg from "@/assets/hero-tuscany.jpg";
 
@@ -41,7 +40,25 @@ function Dashboard() {
   useEffect(() => {
     let cancelled = false;
 
-    getDashboardDataFn()
+    browserApiRequest<Trip[]>("/api/v1/trips")
+      .then(async (trips): Promise<DashboardData> => {
+        const dashboardTrips = await Promise.all(
+          trips.map(async (trip): Promise<DashboardTrip> => {
+            const images = await browserApiRequest<Array<{ s3Url?: string }>>(
+              `/api/v1/trips/${encodeURIComponent(trip.id)}/images`,
+            );
+            return {
+              ...trip,
+              imageCount: images.length,
+              coverImageUrl: images[0]?.s3Url ?? "",
+            };
+          }),
+        );
+        return {
+          trips: dashboardTrips,
+          imageCount: dashboardTrips.reduce((total, trip) => total + trip.imageCount, 0),
+        };
+      })
       .then((result) => {
         if (!cancelled) setData(result);
       })
@@ -59,7 +76,8 @@ function Dashboard() {
   useEffect(() => {
     let cancelled = false;
 
-    getCurrentPricingPlanFn()
+    browserApiRequest<{ data: PricingPlan }>("/api/v1/auth/plan")
+      .then((response) => response.data)
       .then((activePlan) => {
         if (cancelled) return;
         setCurrentPlan(activePlan);
@@ -82,7 +100,9 @@ function Dashboard() {
     const tripName = trip.title || trip.destination || "this trip";
     setDeletingTripId(trip.id);
     try {
-      await deleteTripFn({ data: { id: trip.id } });
+      await browserApiRequest(`/api/v1/trips/${encodeURIComponent(trip.id)}`, {
+        method: "DELETE",
+      });
       setData((current) =>
         current
           ? {

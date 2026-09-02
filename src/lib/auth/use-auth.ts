@@ -1,8 +1,9 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "@tanstack/react-router";
+import { useAuth0 } from "@auth0/auth0-react";
 
-import type { LoginInput, RegisterInput, User } from "@/interface/auth";
-import { loginFn, logoutFn, registerFn } from "@/services/auth.functions";
+import type { User } from "@/interface/auth";
+import { logoutFn } from "@/services/auth.functions";
 
 import { useCurrentUser } from "./use-current-user";
 
@@ -11,8 +12,6 @@ interface AuthState {
   isAuthenticated: boolean;
   isPending: boolean;
   error: string | null;
-  login: (input: LoginInput) => Promise<User>;
-  register: (input: RegisterInput) => Promise<User>;
   logout: () => Promise<void>;
 }
 
@@ -23,6 +22,7 @@ interface AuthState {
  */
 export function useAuth(): AuthState {
   const router = useRouter();
+  const { logout: logoutFromAuth0 } = useAuth0();
   const user = useCurrentUser();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,24 +47,18 @@ export function useAuth(): AuthState {
     [router],
   );
 
-  const login = useCallback((input: LoginInput) => run(() => loginFn({ data: input })), [run]);
-
-  const register = useCallback(
-    (input: RegisterInput) => run(() => registerFn({ data: input })),
-    [run],
-  );
-
   const logout = useCallback(async () => {
     await run(() => logoutFn());
-  }, [run]);
+    if (typeof window !== "undefined") {
+      logoutFromAuth0({ logoutParams: { returnTo: window.location.origin } });
+    }
+  }, [logoutFromAuth0, run]);
 
   return {
     user,
     isAuthenticated: user != null,
     isPending,
     error,
-    login,
-    register,
     logout,
   };
 }

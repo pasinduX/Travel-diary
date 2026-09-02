@@ -22,7 +22,8 @@ export type AuthProvider = "local" | "google";
 /** Access + refresh pair returned by the backend. Server-side only. */
 export interface AuthTokens {
   accessToken: string;
-  refreshToken: string;
+  /** Local auth may provide this; Auth0 refresh is managed by the browser SDK. */
+  refreshToken?: string;
   /** Absolute expiry (epoch ms) of the access token, when the backend tells us. */
   accessTokenExpiresAt: number | null;
 }

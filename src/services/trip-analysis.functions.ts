@@ -16,3 +16,17 @@ export const getTripAnalysisStatusFn = createServerFn({ method: "GET" })
       toClientError(error);
     }
   });
+
+export const retryFailedTripAnalysisFn = createServerFn({ method: "POST" })
+  .validator(z.object({ tripId: z.string().min(1) }))
+  .handler(async ({ data }): Promise<{ retried: number }> => {
+    try {
+      const retried = await analysisService.retryFailedTripAnalysis(
+        await requireAccessToken(),
+        data.tripId,
+      );
+      return { retried };
+    } catch (error) {
+      toClientError(error);
+    }
+  });

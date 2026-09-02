@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import { Toaster } from "@/components/ui/sonner";
+import { Auth0Provider } from "@/components/auth/Auth0Provider";
 import type { User } from "@/interface/auth";
 import { getCurrentUser } from "@/services/auth.functions";
 import {
@@ -166,9 +167,11 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-    </QueryClientProvider>
+    <Auth0Provider>
+      <QueryClientProvider client={queryClient}>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+      </QueryClientProvider>
+    </Auth0Provider>
   );
 }
