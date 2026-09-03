@@ -31,7 +31,9 @@ export function Auth0Provider({ children }: { children: React.ReactNode }) {
     <Provider
       domain={domain}
       clientId={clientId}
-      cacheLocation="memory"
+      // Keep the Auth0 SDK session across browser refreshes. Access tokens
+      // are still renewed silently by Auth0 when they expire.
+      cacheLocation="localstorage"
       onRedirectCallback={(appState) => {
         const returnTo = appState?.returnTo;
         if (typeof returnTo === "string" && returnTo.startsWith("/")) {

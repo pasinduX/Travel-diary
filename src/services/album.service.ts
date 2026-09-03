@@ -10,5 +10,10 @@ export async function getAlbum(token: string, tripId: string): Promise<AlbumPlan
 }
 
 export async function generateAlbum(token: string, tripId: string): Promise<AlbumPlan> {
-  return apiRequest<AlbumPlan>(`${albumPath(tripId)}/generate`, { method: "POST", token });
+  // AI album composition can take longer than ordinary API reads.
+  return apiRequest<AlbumPlan>(`${albumPath(tripId)}/generate`, {
+    method: "POST",
+    token,
+    timeoutMs: 180_000,
+  });
 }

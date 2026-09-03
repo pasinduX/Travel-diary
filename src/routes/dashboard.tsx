@@ -11,7 +11,6 @@ import { MemoryCard } from "@/components/voyaloom/MemoryCard";
 import { ConfirmDialog } from "@/components/voyaloom/ConfirmDialog";
 import type { DashboardData, DashboardTrip } from "@/services/dashboard.functions";
 import { browserApiRequest } from "@/services/browser-api";
-import type { PricingPlan } from "@/interface/pricing";
 import type { Trip } from "@/interface/trip";
 import { seo } from "@/lib/seo/seo";
 import heroImg from "@/assets/hero-tuscany.jpg";
@@ -32,8 +31,6 @@ function Dashboard() {
   const firstName = user?.name?.split(" ")[0] ?? user?.username ?? "traveler";
   const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [currentPlan, setCurrentPlan] = useState<PricingPlan | null>(null);
-  const [planError, setPlanError] = useState<string | null>(null);
   const [deletingTripId, setDeletingTripId] = useState<string | null>(null);
   const [tripPendingDelete, setTripPendingDelete] = useState<DashboardTrip | null>(null);
 
@@ -65,26 +62,6 @@ function Dashboard() {
       .catch((reason: unknown) => {
         if (!cancelled) {
           setError(reason instanceof Error ? reason.message : "Could not load your trips.");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    browserApiRequest<{ data: PricingPlan }>("/api/v1/auth/plan")
-      .then((response) => response.data)
-      .then((activePlan) => {
-        if (cancelled) return;
-        setCurrentPlan(activePlan);
-      })
-      .catch((reason: unknown) => {
-        if (!cancelled) {
-          setPlanError(reason instanceof Error ? reason.message : "Could not load pricing plans.");
         }
       });
 
@@ -147,61 +124,23 @@ function Dashboard() {
           <span className="text-[10px] uppercase tracking-ultra text-gold mb-6 block">
             Welcome back, {firstName}
           </span>
-          <h1 className="mb-5 font-serif text-5xl leading-[0.95] sm:mb-6 sm:text-6xl md:text-8xl">
-            Your archive.
-          </h1>
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <h1 className="font-serif text-5xl leading-[0.95] sm:text-6xl md:text-8xl">
+              Your archive.
+            </h1>
+            <a
+              href="/#pricing"
+              className="mb-1 inline-flex items-center border border-gold/30 bg-gold/10 px-4 py-3 text-[10px] uppercase tracking-luxury text-gold transition-colors hover:bg-gold hover:text-midnight sm:px-5"
+            >
+              Upgrade plan
+            </a>
+          </div>
           <p className="font-serif italic text-xl text-sand/60 max-w-xl">
             {isLoading
               ? "Gathering your journeys."
               : `${trips.length} ${trips.length === 1 ? "journey" : "journeys"}. ${data?.imageCount ?? 0} ${data?.imageCount === 1 ? "image" : "images"}.`}
           </p>
         </motion.div>
-
-        {/* Stats */}
-        <div className="mt-10 grid max-w-xl grid-cols-2 gap-px border border-white/5 bg-white/5 sm:mt-16">
-          {[
-            { label: "Trips", value: data ? String(trips.length) : "—" },
-            { label: "Images", value: data ? String(data.imageCount) : "—" },
-          ].map((s) => (
-            <div key={s.label} className="bg-midnight p-5 sm:p-8">
-              <p className="font-serif text-3xl text-gold sm:text-4xl">{s.value}</p>
-              <p className="mt-2 text-[9px] uppercase tracking-luxury text-sand/40 sm:text-[10px]">
-                {s.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto mb-16 max-w-7xl px-4 sm:mb-24 sm:px-6 md:px-12">
-        <div className="flex flex-wrap items-end justify-between gap-4 mb-8 border-b border-white/10 pb-6">
-          <div>
-            <span className="text-[10px] uppercase tracking-ultra text-gold mb-3 block">
-              Membership
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl">Your plan</h2>
-          </div>
-          <a
-            href="/#pricing"
-            className="inline-flex items-center border border-gold/30 bg-gold/10 px-4 py-2 text-[10px] uppercase tracking-luxury text-gold transition-colors hover:bg-gold hover:text-midnight"
-          >
-            Upgrade plan
-          </a>
-        </div>
-
-        {planError && <p className="text-sm text-ember">{planError}</p>}
-        {!planError && currentPlan && (
-          <div className="flex max-w-2xl flex-wrap items-center gap-6 border border-gold/30 bg-gold/5 px-6 py-5">
-            <div>
-              <p className="font-serif text-3xl text-gold">{currentPlan.name}</p>
-              <p className="mt-1 text-xs text-sand/50">
-                Up to {currentPlan.limits.numberOfTrips} trips and {currentPlan.limits.maxImages}{" "}
-                images
-              </p>
-            </div>
-            <span className="text-[10px] uppercase tracking-luxury text-sand/40">Active plan</span>
-          </div>
-        )}
       </section>
 
       {/* Trips grid - cinematic asymmetric */}

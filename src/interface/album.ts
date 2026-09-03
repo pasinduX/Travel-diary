@@ -20,6 +20,14 @@ export interface AlbumPlan {
   subtitle?: string;
   tone?: string;
   chapters: AlbumChapter[];
+  quotes?: AlbumQuote[];
+}
+
+export interface AlbumQuote {
+  from: string;
+  to: string;
+  text: string;
+  order: number;
 }
 
 export interface AlbumChapter {

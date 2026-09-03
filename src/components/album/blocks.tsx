@@ -36,12 +36,21 @@ export function FullBleedImage({ block, images }: BlockProps) {
   const image = firstImage(block, images);
   if (!image) return null;
   return (
-    <img
-      src={image}
-      alt={block.title ?? "Travel moment"}
-      loading="lazy"
-      className="h-[70vh] min-h-[420px] w-full object-cover"
-    />
+    <figure className="group relative overflow-hidden bg-charcoal">
+      <img
+        src={image}
+        alt={block.title ?? "Travel moment"}
+        loading="lazy"
+        className="h-[70vh] min-h-[420px] w-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-midnight/90 via-midnight/10 to-transparent" />
+      {(block.title || block.caption) && (
+        <figcaption className="absolute inset-x-0 bottom-0 p-6 md:p-12">
+          {block.title && <h3 className="font-serif text-4xl md:text-6xl">{block.title}</h3>}
+          {block.caption && <p className="mt-3 max-w-lg text-sm text-sand/65">{block.caption}</p>}
+        </figcaption>
+      )}
+    </figure>
   );
 }
 
@@ -99,13 +108,14 @@ export function ImageCaption({ block, images }: BlockProps) {
   const image = firstImage(block, images);
   if (!image) return null;
   return (
-    <figure>
+    <figure className="group">
       <img
         src={image}
         alt={block.title ?? "Travel moment"}
         loading="lazy"
-        className="aspect-[4/3] w-full object-cover"
+        className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
       />
+      {block.title && <h3 className="mt-5 font-serif text-3xl text-sand/90">{block.title}</h3>}
       {block.caption && (
         <figcaption className="mt-4 max-w-lg font-serif italic text-xl text-sand/60">
           {block.caption}
@@ -129,19 +139,29 @@ export function Panorama({ block, images }: BlockProps) {
 
 export function FilmStrip({ block, images }: BlockProps) {
   return (
-    <div className="flex snap-x gap-3 overflow-x-auto pb-4">
-      {imageList(block, images)
-        .slice(0, 4)
-        .map((image) => (
-          <img
-            key={image}
-            src={image}
-            alt="Travel moment"
-            loading="lazy"
-            className="aspect-[4/3] w-[78vw] shrink-0 snap-start object-cover sm:w-[45vw] md:w-[28vw]"
-          />
-        ))}
-    </div>
+    <figure>
+      {(block.title || block.caption) && (
+        <figcaption className="mb-6 flex items-end justify-between gap-6">
+          {block.title && <h3 className="font-serif text-4xl md:text-5xl">{block.title}</h3>}
+          {block.caption && (
+            <p className="max-w-sm text-right text-sm text-sand/55">{block.caption}</p>
+          )}
+        </figcaption>
+      )}
+      <div className="flex snap-x gap-3 overflow-x-auto pb-4">
+        {imageList(block, images)
+          .slice(0, 4)
+          .map((image) => (
+            <img
+              key={image}
+              src={image}
+              alt="Travel moment"
+              loading="lazy"
+              className="aspect-[4/3] w-[78vw] shrink-0 snap-start object-cover sm:w-[45vw] md:w-[28vw]"
+            />
+          ))}
+      </div>
+    </figure>
   );
 }
 
@@ -188,6 +208,10 @@ export function ClosingFrame({ block, images }: BlockProps) {
         <p className="mx-auto max-w-2xl pt-10 font-serif text-3xl italic text-sand/75 md:text-5xl">
           {block.text}
         </p>
+      )}
+      {block.title && <h3 className="mt-10 font-serif text-5xl md:text-7xl">{block.title}</h3>}
+      {block.caption && (
+        <p className="mx-auto mt-4 max-w-lg text-sm text-sand/55">{block.caption}</p>
       )}
     </div>
   );

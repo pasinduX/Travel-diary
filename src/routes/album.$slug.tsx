@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AlbumRenderer } from "@/components/album/AlbumRenderer";
 import { AlbumGenerationLoader } from "@/components/album/AlbumGenerationLoader";
 import { toImageMap } from "@/components/album/createAlbumPlan";
 import { LuxuryNavbar } from "@/components/voyaloom/LuxuryNavbar";
@@ -8,6 +7,7 @@ import { requireAuth } from "@/lib/auth/guards";
 import { seo } from "@/lib/seo/seo";
 import { generateAlbumFn, getAlbumFn } from "@/services/album.functions";
 import { listTripImagesFn } from "@/services/trip-image.functions";
+import { AlbumFilm } from "@/components/album/AlbumFilm";
 
 export const Route = createFileRoute("/album/$slug")({
   beforeLoad: ({ context, location }) => requireAuth(context, location.pathname),
@@ -25,6 +25,7 @@ function Album() {
   const [album, setAlbum] = useState<{
     plan: import("@/interface/album").AlbumPlan;
     images: Record<string, string>;
+    sourceImages: import("@/interface/trip-image").TripImage[];
   } | null>(null);
   const [error, setError] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -45,6 +46,7 @@ function Album() {
         setAlbum({
           plan,
           images: toImageMap(images),
+          sourceImages: images,
         });
       })
       .catch((reason) => {
@@ -76,7 +78,7 @@ function Album() {
         imageCount: images.length,
         durationMs: Date.now() - startedAt,
       });
-      setAlbum({ plan, images: toImageMap(images) });
+      setAlbum({ plan, images: toImageMap(images), sourceImages: images });
       setError(false);
     } catch (reason) {
       console.error("[VoyaLoom][Album] generation failed", { tripId, reason });
@@ -138,7 +140,7 @@ function Album() {
           {generationError}
         </p>
       )}
-      <AlbumRenderer album={album.plan} images={album.images} />
+      <AlbumFilm images={album.sourceImages} plan={album.plan} />
     </AlbumShell>
   );
 }

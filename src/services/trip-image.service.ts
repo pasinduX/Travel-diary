@@ -101,6 +101,15 @@ function normalizeTripImage(raw: RawTripImage): TripImage {
     width: Number(raw.width ?? 0),
     height: Number(raw.height ?? 0),
     dimensionName: raw.dimensionName ?? "",
+    exif: raw.exif
+      ? {
+          capturedAt: raw.exif.captured_at,
+          timezone: raw.exif.timezone,
+          cameraMake: raw.exif.camera_make,
+          cameraModel: raw.exif.camera_model,
+          lensModel: raw.exif.lens_model,
+        }
+      : null,
     s3Key: raw.s3Key ?? "",
     s3Url: raw.s3Url ?? "",
     createdAt: raw.createdAt ?? "",

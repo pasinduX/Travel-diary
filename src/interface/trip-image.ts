@@ -13,12 +13,29 @@ export interface TripImage {
   width: number;
   height: number;
   dimensionName: string;
+  exif?: ImageEXIF | null;
   s3Key: string;
   s3Url: string;
   /** RFC 3339 */
   createdAt: string;
   /** RFC 3339 */
   updatedAt: string;
+}
+
+export interface ImageEXIF {
+  capturedAt?: string;
+  timezone?: string;
+  cameraMake?: string;
+  cameraModel?: string;
+  lensModel?: string;
+}
+
+export interface RawImageEXIF {
+  captured_at?: string;
+  timezone?: string;
+  camera_make?: string;
+  camera_model?: string;
+  lens_model?: string;
 }
 
 /** Raw image object from the backend — every field optional / defensive. */
@@ -32,6 +49,7 @@ export interface RawTripImage {
   width?: number;
   height?: number;
   dimensionName?: string;
+  exif?: RawImageEXIF | null;
   s3Key?: string;
   s3Url?: string;
   createdAt?: string;
